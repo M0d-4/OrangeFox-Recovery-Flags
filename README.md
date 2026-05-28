@@ -6,7 +6,7 @@
  All build vars beginning with "FOX_" *must* be exported as environment variables in vendorsetup.sh, or at the command line
  The build vars beginning with "OF_" can be exported in vendorsetup.sh, or can be declared in a device tree make (ie, ".mk") file
  Copyright (C) 2019-2025 OrangeFox Recovery Project
- Date: 11 December 2025
+ Date: 28 May 2026
 ```
 #
 ```
@@ -472,8 +472,8 @@
 - default = 0
 #
 "FOX_DELETE_INITD_ADDON"
-- set this to 1 to delete the initd addon
-- default = 0
+- set this to 0 to enable the initd addon
+- default = 1
 #
 "FOX_INSTALLER_DEBUG_MODE"
 - set this to 1 to put the OrangeFox zip installer in debug mode
@@ -752,9 +752,9 @@
 -
 - Examples:
 -
--  "export FOX_SETTINGS_ROOT_DIRECTORY=/sdcard/PRIVATE"
+-  "export FOX_MISCELLANEOUS_ROOT_DIRECTORY=/sdcard/PRIVATE"
 -
--  "export FOX_SETTINGS_ROOT_DIRECTORY=/sdcard1/MyDev"
+-  "export FOX_MISCELLANEOUS_ROOT_DIRECTORY=/sdcard1/MyDev"
 -
 -
 - This is a HIGHLY EXPERIMENTAL feature, which may have bugs; use with GREAT caution, and with lots of testing
@@ -890,7 +890,7 @@
 #
 "OF_USE_DMCTL" [NEW] (renamed from "FOX_USE_DMCTL")
    - set this to 1 if you want to use 'dmctl' (as an alternative to 'dmsetup') to try and work around problems with formatting the /data partition
-   - if this is enabled, the dmsetup binary will be built into the recovery, and will be called just before formatting /data
+   - if this is enabled, the dmctl binary will be built into the recovery, and will be called just before formatting /data
    - this is only useful for devices/ROMs that have dynamic partitions
    - default = 0
 #
@@ -925,4 +925,20 @@
    - the addon requires the device to have a dedicated frp partition; if there is none, then enabling this variable will achieve absolutely nothing
    - the addon is very highly experimental, and should be used with great care; it should NOT be used unless everything else has failed
    - default = 0
-----------------
+#
+"OF_DONT_SUBSTITUTE_PERMISSIONS" [NEW] [! EXPERIMENTAL !]
+   - Set this to 1 to opt out of substituting permissions/selinux contexts for OrangeFox-related files/folders, as required by Android 16 QPR2's access strictness
+   - If set to 1, OrangeFox leaves permissions/contexts alone, as normal. This is likely to cause restricted access (in Android 16 QPR2) to files/folders created
+   - by OrangeFox in the internal storage, because they will most likely be owned by root, and their selinux contexts would not be "media_rw".
+   - So, it is best to stay away from this setting, unless the subtituted permissions are causing problems.
+   - default = 0
+#
+"OF_VAB_ORS_WIPE_DATA_IS_FORMAT" [NEW] [! EXPERIMENTAL !]
+   - Set this to 1 to respond to ORS '--wipe-data' instructions in the expected manner, by formatting data.
+   - This is what AOSP recoveries do, and this (a 'factory reset') is what the system update_engine expects. Currently, we just wipe data, instead of formatting it.
+   - For virtual A/B devices, this often leaves the device a permanent 'merge' status after flashing a ROM (the 'unmerged snapshot' problem), causing a brick.
+   - This build var instructs the recovery to respond as expected, rather than as twrp has always done.
+   - This is only relevant to Virtual A/B devices. Do NOT try to use it for non-virtual A/B devices - you will only get a build error.
+   - default = 0
+#
+# -----------------------------------
