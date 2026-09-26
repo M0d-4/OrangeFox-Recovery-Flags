@@ -10,8 +10,6 @@
 ```
 #
 ```
-
-OrangeFox build vars (universal)
 TARGET_ARCH
 
 set this to "arm" or "arm64", depending on whether your device is 32-bit or 64-bit
